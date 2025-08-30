@@ -37,6 +37,10 @@ jobs:
       - name: Run npm audit (high)
         run: npm audit --audit-level=high
         working-directory: calendar_utility
+      - name: Run GitLeaks to detect secrets
+        uses: zricethezav/gitleaks-action@v1.4.0
+        with:
+          args: "detect --source=. --verbose"
 
   build:
     runs-on: ubuntu-latest

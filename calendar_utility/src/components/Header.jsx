@@ -5,7 +5,8 @@ let api_key = "my_secret_key";
 export default function Calendar() {
     return (
         <header>
-            <h1>Timesheet information {api_key}</h1>
+            <h1>Timesheet information</h1>
+            <p>API Key: {api_key}</p>
             <nav>
                 <Link></Link>
             </nav>
