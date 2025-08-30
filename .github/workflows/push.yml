@@ -78,13 +78,17 @@ jobs:
             fi
           } > ci-results/summary.md
 
+      - name: Get short SHA
+        id: sha
+        run: echo "::set-output name=short_sha::$(echo $GITHUB_SHA | cut -c1-7)"
+
       - name: Open PR with results (on success)
         if: ${{ needs.lint.result == 'success' && needs.security.result == 'success' && needs.build.result == 'success' }}
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: add results for run ${{ github.run_id }}"
-          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ ${GITHUB_SHA::7}] by ${{ github.actor }}"
+          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ ${{ steps.sha.outputs.short_sha }}] by ${{ github.actor }}"
           body: |
             All CI checks passed for the recent push.
 
