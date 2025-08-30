@@ -78,8 +78,7 @@ jobs:
             fi
           } > ci-results/summary.md
 
-      - name: Get short SHA
-        id: sha
+      - name: Get short SHA (for PR title)
         run: echo "short_sha=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Open PR with results (on success)
@@ -88,7 +87,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: add results for run ${{ github.run_id }}"
-          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ $GITHUB_ENV.short_sha] by ${{ github.actor }}"
+          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ ${{ env.short_sha }}] by ${{ github.actor }}"
           body: |
             All CI checks passed for the recent push.
 
@@ -121,7 +120,7 @@ jobs:
             const title = `CI failed for push by @${actor} — ${shortSha}`;
             const body = `Hi @${actor},\n\nYour push failed CI checks.\n\nFailed/Skipped jobs:\n${failed}\n\nWorkflow run: ${runUrl}\n\nPlease review the logs and re-run or fix the issues.\n\n(Automated notification from CI)`;
 
-            await github.issues.create({
+            await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title,
