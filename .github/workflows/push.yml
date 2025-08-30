@@ -103,6 +103,23 @@ jobs:
             const actor = context.actor;
             const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
             const shortSha = (context.sha || '').slice(0,7);
+
+            const statuses = {
+              lint: '${{ needs.lint.result }}',
+              security: '${{ needs.security.result }}',
+              build: '${{ needs.build.result }}'
+            };
+            const failed = Object.entries(statuses)
+              .filter(([_, r]) => r !== 'success')
+              .map(([k, r]) => `- ${k}: ${r}`)
+              .join('\n') || '- none';
+
             const title = `CI failed for push by @${actor} — ${shortSha}`;
-            const body = `Hi @${actor},\n\nYour push failed CI checks.\n\nWorkflow run: ${runUrl}\n\nPlease review the logs and re-run or fix the issues.\n\n(Automated notification from CI)`;
-            await github.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body });
+            const body = `Hi @${actor},\n\nYour push failed CI checks.\n\nFailed/Skipped jobs:\n${failed}\n\nWorkflow run: ${runUrl}\n\nPlease review the logs and re-run or fix the issues.\n\n(Automated notification from CI)`;
+
+            await github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body
+            });
