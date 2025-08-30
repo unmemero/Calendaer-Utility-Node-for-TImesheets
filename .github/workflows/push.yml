@@ -84,7 +84,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: add results for run ${{ github.run_id }}"
-          title: "CI Results: Lint, Security, Build Passed"
+          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ ${GITHUB_SHA::7}] by ${{ github.actor }}"
           body: |
             All CI checks passed for the recent push.
 
