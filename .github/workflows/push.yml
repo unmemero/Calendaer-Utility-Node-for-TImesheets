@@ -80,7 +80,7 @@ jobs:
 
       - name: Get short SHA
         id: sha
-        run: echo "::set-output name=short_sha::$(echo $GITHUB_SHA | cut -c1-7)"
+        run: echo "short_sha=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Open PR with results (on success)
         if: ${{ needs.lint.result == 'success' && needs.security.result == 'success' && needs.build.result == 'success' }}
@@ -88,7 +88,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: add results for run ${{ github.run_id }}"
-          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ ${{ steps.sha.outputs.short_sha }}] by ${{ github.actor }}"
+          title: "CI Results: Lint, Security, Build Passed [${{ github.ref_name }} @ $GITHUB_ENV.short_sha] by ${{ github.actor }}"
           body: |
             All CI checks passed for the recent push.
 
@@ -106,7 +106,7 @@ jobs:
           script: |
             const actor = context.actor;
             const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-            const shortSha = (context.sha || '').slice(0,7);
+            const shortSha = (process.env.GITHUB_SHA || '').slice(0,7);
 
             const statuses = {
               lint: '${{ needs.lint.result }}',
