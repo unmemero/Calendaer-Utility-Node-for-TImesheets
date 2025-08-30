@@ -20,8 +20,10 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: npm ci
+        working-directory: calendar_utility
       - name: Run ESLint
         run: npm run lint
+        working-directory: calendar_utility
 
   security:
     runs-on: ubuntu-latest
@@ -30,8 +32,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install dependencies
         run: npm ci
+        working-directory: calendar_utility
       - name: Run npm audit (high)
         run: npm audit --audit-level=high
+        working-directory: calendar_utility
 
   build:
     runs-on: ubuntu-latest
@@ -40,8 +44,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install dependencies
         run: npm ci
+        working-directory: calendar_utility
       - name: Build App
         run: npm run build
+        working-directory: calendar_utility
 
   pr-or-notify:
     runs-on: ubuntu-latest
