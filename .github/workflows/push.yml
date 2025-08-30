@@ -40,7 +40,7 @@ jobs:
       - name: Run GitLeaks to detect secrets
         uses: zricethezav/gitleaks-action@v1.4.0
         with:
-          args: "detect --source=. --verbose"
+          args: "detect --source=. --config=.gitleaks.toml --verbose"
 
   build:
     runs-on: ubuntu-latest
