@@ -1,8 +1,9 @@
 name: CI Lint, Security, Build, PR/Notify
 
 permissions:
-  contents: write
-  issues: write
+  contents: write        # needed to push ci/results-* branch
+  pull-requests: write   # needed to create PRs
+  issues: write          # for the fallback issue notification
 
 on:
   push:
@@ -81,6 +82,7 @@ jobs:
         if: ${{ needs.lint.result == 'success' && needs.security.result == 'success' && needs.build.result == 'success' }}
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: add results for run ${{ github.run_id }}"
           title: "CI Results: Lint, Security, Build Passed"
           body: |
