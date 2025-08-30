@@ -54,6 +54,8 @@ jobs:
     needs: [lint, security, build]
     if: ${{ always() }}
     steps:
+      - name: Navigate to repository root
+        run: cd ${{ github.workspace }}
       - name: Create PR with results (on success)
         if: ${{ needs.lint.result == 'success' && needs.security.result == 'success' && needs.build.result == 'success' }}
         uses: peter-evans/create-pull-request@v5

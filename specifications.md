@@ -50,4 +50,4 @@ All data is to be saved in an encrypted json with the following format:
 
 
 All development is to be done in a secure manner, ensuring that all sensitive information is protected and that the application complies with relevant regulations and best practices.
-The application should be compiled into portable files. Use the material icons and components library from react
+The application should be compiled into portable files. Use the material icons and components library from react. 

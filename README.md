@@ -26,3 +26,6 @@ This app includes:
 
 ## Security
 All sensitive information is protected and the app complies with best practices.
+
+## License
+will add this later
