@@ -1,11 +1,11 @@
 import React from "react";
 
-let unusedVar = "This is an unused variable";
+let api_key = "my_secret_key";
 
 export default function Calendar() {
     return (
         <header>
-            <h1>Timesheet information</h1>
+            <h1>Timesheet information {api_key}</h1>
             <nav>
                 <Link></Link>
             </nav>
