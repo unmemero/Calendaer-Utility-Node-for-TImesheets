@@ -1,5 +1,7 @@
 import React from "react";
 
+let unusedVar = "This is an unused variable";
+
 export default function Calendar() {
     return (
         <header>
