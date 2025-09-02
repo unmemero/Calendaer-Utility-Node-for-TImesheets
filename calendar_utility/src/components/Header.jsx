@@ -9,7 +9,7 @@ import logo from "../assets/logo.png"; // Import PNG as image
 
 export default function Calendar() {
     return (
-        <AppBar position="static" sx={{ backgroundColor: "#111", boxShadow: "none" }}>
+        <AppBar position="fixed" sx={{ backgroundColor: "#111", boxShadow: "none" }}>
             <Toolbar>
                 <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
                     <img src={logo} alt="Logo" style={{ height: 32, marginRight: 12 }} />

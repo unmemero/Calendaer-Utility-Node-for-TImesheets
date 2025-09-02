@@ -9,4 +9,9 @@
 .layout-main {
   flex: 1;
   padding: 1.5rem 0.5rem;
+  padding-top: 72px; // Add top padding for fixed header
+}
+
+.profile-page {
+  margin-bottom: 2.5rem;
 }

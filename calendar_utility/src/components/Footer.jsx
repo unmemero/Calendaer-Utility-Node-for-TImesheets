@@ -7,7 +7,7 @@ import { GitHub, Email } from "@mui/icons-material";
 
 export default function Footer() {
     return (
-        <AppBar position="fixed" sx={{ top: "auto", bottom: 0, backgroundColor: "transparent", boxShadow: "none" }}>
+        <AppBar position="fixed" sx={{ top: "auto", bottom: 0, backgroundColor: "#000", boxShadow: "none" }}>
             <hr style={{ width: "100%", border: "none", borderTop: "1px solid #444", margin: 0 }} />
             <Toolbar sx={{ justifyContent: "center", flexDirection: "column", alignItems: "center", minHeight: 64 }}>
                 <Box sx={{ display: "flex", gap: 2, justifyContent: "center", alignItems: "center", mb: 1 }}>
