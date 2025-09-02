@@ -1,0 +1,12 @@
+// Radial teal gradient background for the app layout
+.layout-bg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 30% 30%, #38b2ac 0%, #285e61 100%);
+}
+
+.layout-main {
+  flex: 1;
+  padding: 1.5rem 0.5rem;
+}
