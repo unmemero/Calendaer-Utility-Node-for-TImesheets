@@ -168,183 +168,164 @@ export default function Profile() {
     }
 
     return (
-        <Box className="profile-page" sx={{ maxWidth: 700, mx: "auto", mt: 4, mb: 4, position: "relative" }}>
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3 }}>
-                <Typography variant="h4" className="profile-title" sx={{ fontWeight: 700 }}>
-                    <Person sx={{ mr: 1, verticalAlign: "middle" }} /> Profile
-                </Typography>
+        <Box className="profile-page" sx={{ maxWidth: 900, mx: "auto", mt: 4, mb: 4, display: 'flex', flexDirection: 'row', gap: 3 }}>
+            {/* Sticky sidebar for profile tools */}
+            <Box sx={{ position: 'sticky', top: 32, alignSelf: 'flex-start', minWidth: 220, maxHeight: 'calc(100vh - 48px)', zIndex: 10 }}>
+                <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 1, fontWeight: 700, textAlign: 'center' }}>Profile Tools</Typography>
+                    <Button variant="outlined" startIcon={<FileDownload />} onClick={handleExport}>
+                        Export
+                    </Button>
+                    <Button variant="outlined" startIcon={<FileUpload />} onClick={() => fileInputRef.current.click()}>
+                        Import
+                    </Button>
+                    <input type="file" accept=".json" ref={fileInputRef} style={{ display: "none" }} onChange={handleImport} />
+                    {loaded && (
+                        editMode ? (
+                            <Button variant="contained" color="primary" startIcon={<Save />} onClick={handleSave}>
+                                Save
+                            </Button>
+                        ) : (
+                            <Button variant="outlined" startIcon={<Edit />} onClick={handleEdit}>
+                                Edit
+                            </Button>
+                        )
+                    )}
+                </Paper>
             </Box>
-            {/* Sticky sidebar for actions */}
-            <Box
-                className="profile-actions-sidebar"
-                sx={{
-                    position: "fixed",
-                    top: 100,
-                    right: 40,
-                    zIndex: 1200,
-                    transition: "width 0.3s, box-shadow 0.3s",
-                    width: 56,
-                    height: "auto",
-                    background: "#fff",
-                    borderRadius: 3,
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-                    overflow: "hidden",
-                    '&:hover': {
-                        width: 220,
-                        boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
-                    },
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    p: 1,
-                }}
-                onMouseEnter={e => { e.currentTarget.style.width = '220px'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.18)'; }}
-                onMouseLeave={e => { e.currentTarget.style.width = '56px'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)'; }}
-            >
-                <Button fullWidth variant="outlined" startIcon={<FileDownload />} onClick={handleExport} sx={{ mb: 1, justifyContent: "flex-start" }}>
-                    Export
-                </Button>
-                <Button fullWidth variant="outlined" startIcon={<FileUpload />} onClick={() => fileInputRef.current.click()} sx={{ mb: 1, justifyContent: "flex-start" }}>
-                    Import
-                </Button>
-                <input type="file" accept=".json" ref={fileInputRef} style={{ display: "none" }} onChange={handleImport} />
-                {loaded && (
-                    editMode ? (
-                        <Button fullWidth variant="contained" color="primary" startIcon={<Save />} onClick={handleSave} sx={{ justifyContent: "flex-start" }}>
-                            Save
-                        </Button>
-                    ) : (
-                        <Button fullWidth variant="outlined" startIcon={<Edit />} onClick={handleEdit} sx={{ justifyContent: "flex-start" }}>
-                            Edit
-                        </Button>
-                    )
-                )}
+            {/* Main profile content */}
+            <Box sx={{ flex: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start", mb: 3 }}>
+                    <Typography variant="h4" className="profile-title" sx={{ fontWeight: 700 }}>
+                        <Person sx={{ mr: 1, verticalAlign: "middle" }} /> Profile
+                    </Typography>
+                </Box>
+                <Paper className="profile-section" sx={{ p: 3, mb: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Personal Information
+                    </Typography>
+                    <Grid container columnSpacing={2} rowSpacing={2} sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+                        <TextField label="First Name" fullWidth value={profile.firstName} onChange={handleChange("firstName")} disabled={!editMode} InputProps={{ startAdornment: <Person sx={{ mr: 1 }} /> }} />
+                        <TextField label="Last Name" fullWidth value={profile.lastName} onChange={handleChange("lastName")} disabled={!editMode} InputProps={{ startAdornment: <Person sx={{ mr: 1 }} /> }} />
+                        <TextField label="Middle Initial" fullWidth value={profile.middleInitial} onChange={handleChange("middleInitial")} disabled={!editMode} InputProps={{ startAdornment: <Badge sx={{ mr: 1 }} /> }} />
+                        <TextField label="Employee ID" fullWidth value={profile.employeeId} onChange={handleChange("employeeId")} disabled={!editMode} InputProps={{ startAdornment: <AssignmentInd sx={{ mr: 1 }} /> }} />
+                        <TextField label="Department" fullWidth value={profile.department} onChange={handleChange("department")} disabled={!editMode} InputProps={{ startAdornment: <Business sx={{ mr: 1 }} /> }} sx={{ gridColumn: '1 / span 2' }} />
+                    </Grid>
+                </Paper>
+                <Paper className="profile-section" sx={{ p: 3, mb: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Position Type
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 3, mb: 2 }}>
+                        <FormControlLabel control={<Checkbox checked={profile.positionType === "full-time"} onChange={handlePositionType("full-time")} disabled={!editMode} />} label={<><Work sx={{ mr: 1 }} />Full Time</>} />
+                        <FormControlLabel control={<Checkbox checked={profile.positionType === "part-time"} onChange={handlePositionType("part-time")} disabled={!editMode} />} label={<><Work sx={{ mr: 1 }} />Part Time</>} />
+                        <FormControlLabel control={<Checkbox checked={profile.positionType === "work-study"} onChange={handlePositionType("work-study")} disabled={!editMode} />} label={<><Work sx={{ mr: 1 }} />Work Study</>} />
+                    </Box>
+                    <Box className="employment-details-container" sx={{ mt: 2, p: 2, border: "1px dashed #bbb", borderRadius: 2 }}>
+                        {employmentDetails}
+                    </Box>
+                </Paper>
+                <Paper className="profile-section" sx={{ p: 3, mb: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Schedule
+                    </Typography>
+                    <Box className="schedule-container" sx={{ p: 2, border: "1px dashed #bbb", borderRadius: 2 }}>
+                        {/* Schedule editor table */}
+                        <TableContainer>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ fontWeight: 600 }}>Day</TableCell>
+                                        <TableCell sx={{ fontWeight: 600 }}>Times</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => {
+                                        const schedule = (profile.schedule && profile.schedule[day]) ? profile.schedule[day] : [];
+                                        return (
+                                            <TableRow key={day}>
+                                                <TableCell>{day}</TableCell>
+                                                <TableCell>
+                                                    {schedule.length === 0 ? (
+                                                        editMode && (
+                                                            <Button variant="outlined" size="small" startIcon={<Add />} onClick={() => {
+                                                                const newSchedule = { ...profile.schedule };
+                                                                newSchedule[day] = [...(newSchedule[day] || []), { start: "", end: "" }];
+                                                                setProfile({ ...profile, schedule: newSchedule });
+                                                            }}>
+                                                                Add Time
+                                                            </Button>
+                                                        )
+                                                    ) : (
+                                                        schedule.map((range, idx) => (
+                                                            <Box key={idx} sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                                                                <TextField
+                                                                    type="time"
+                                                                    label="Start"
+                                                                    value={range.start || ""}
+                                                                    onChange={(e) => {
+                                                                        const newSchedule = { ...profile.schedule };
+                                                                        newSchedule[day][idx].start = e.target.value;
+                                                                        setProfile({ ...profile, schedule: newSchedule });
+                                                                    }}
+                                                                    disabled={!editMode}
+                                                                    size="small"
+                                                                    sx={{ minWidth: 100 }}
+                                                                />
+                                                                <Typography sx={{ mx: 1 }}>-</Typography>
+                                                                <TextField
+                                                                    type="time"
+                                                                    label="End"
+                                                                    value={range.end || ""}
+                                                                    onChange={(e) => {
+                                                                        const newSchedule = { ...profile.schedule };
+                                                                        newSchedule[day][idx].end = e.target.value;
+                                                                        setProfile({ ...profile, schedule: newSchedule });
+                                                                    }}
+                                                                    disabled={!editMode}
+                                                                    size="small"
+                                                                    sx={{ minWidth: 100 }}
+                                                                />
+                                                                {editMode && (
+                                                                    <IconButton size="small" color="error" onClick={() => {
+                                                                        const newSchedule = { ...profile.schedule };
+                                                                        newSchedule[day] = newSchedule[day].filter((_, i) => i !== idx);
+                                                                        setProfile({ ...profile, schedule: newSchedule });
+                                                                    }}>
+                                                                        <Delete fontSize="small" />
+                                                                    </IconButton>
+                                                                )}
+                                                                {editMode && idx === schedule.length - 1 && (
+                                                                    <IconButton size="small" color="primary" onClick={() => {
+                                                                        const newSchedule = { ...profile.schedule };
+                                                                        newSchedule[day] = [...(newSchedule[day] || []), { start: "", end: "" }];
+                                                                        setProfile({ ...profile, schedule: newSchedule });
+                                                                    }}>
+                                                                        <Add fontSize="small" />
+                                                                    </IconButton>
+                                                                )}
+                                                            </Box>
+                                                        ))
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </Paper>
+                <Paper className="profile-section" sx={{ p: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Timesheets Archive
+                    </Typography>
+                    <Box className="timesheet-archive-container" sx={{ p: 2, border: "1px dashed #bbb", borderRadius: 2 }}>
+                        {/* Timesheet archive table will go here */}
+                        <Typography variant="body2" color="text.secondary">Timesheet archive table (pending)</Typography>
+                    </Box>
+                </Paper>
             </Box>
-            <Paper className="profile-section" sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Personal Information
-                </Typography>
-                <Grid container columnSpacing={2} rowSpacing={2} sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                    <TextField label="First Name" fullWidth value={profile.firstName} onChange={handleChange("firstName")} disabled={!editMode} InputProps={{ startAdornment: <Person sx={{ mr: 1 }} /> }} />
-                    <TextField label="Last Name" fullWidth value={profile.lastName} onChange={handleChange("lastName")} disabled={!editMode} InputProps={{ startAdornment: <Person sx={{ mr: 1 }} /> }} />
-                    <TextField label="Middle Initial" fullWidth value={profile.middleInitial} onChange={handleChange("middleInitial")} disabled={!editMode} InputProps={{ startAdornment: <Badge sx={{ mr: 1 }} /> }} />
-                    <TextField label="Employee ID" fullWidth value={profile.employeeId} onChange={handleChange("employeeId")} disabled={!editMode} InputProps={{ startAdornment: <AssignmentInd sx={{ mr: 1 }} /> }} />
-                    <TextField label="Department" fullWidth value={profile.department} onChange={handleChange("department")} disabled={!editMode} InputProps={{ startAdornment: <Business sx={{ mr: 1 }} /> }} sx={{ gridColumn: '1 / span 2' }} />
-                </Grid>
-            </Paper>
-            <Paper className="profile-section" sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Position Type
-                </Typography>
-                <Box sx={{ display: "flex", gap: 3, mb: 2 }}>
-                    <FormControlLabel control={<Checkbox checked={profile.positionType === "full-time"} onChange={handlePositionType("full-time")} disabled={!editMode} />} label={<><Work sx={{ mr: 1 }} />Full Time</>} />
-                    <FormControlLabel control={<Checkbox checked={profile.positionType === "part-time"} onChange={handlePositionType("part-time")} disabled={!editMode} />} label={<><Work sx={{ mr: 1 }} />Part Time</>} />
-                    <FormControlLabel control={<Checkbox checked={profile.positionType === "work-study"} onChange={handlePositionType("work-study")} disabled={!editMode} />} label={<><Work sx={{ mr: 1 }} />Work Study</>} />
-                </Box>
-                <Box className="employment-details-container" sx={{ mt: 2, p: 2, border: "1px dashed #bbb", borderRadius: 2 }}>
-                    {employmentDetails}
-                </Box>
-            </Paper>
-            <Paper className="profile-section" sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Schedule
-                </Typography>
-                <Box className="schedule-container" sx={{ p: 2, border: "1px dashed #bbb", borderRadius: 2 }}>
-                    {/* Schedule editor table */}
-                    <TableContainer>
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ fontWeight: 600 }}>Day</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Times</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => {
-                                    const schedule = (profile.schedule && profile.schedule[day]) ? profile.schedule[day] : [];
-                                    return (
-                                        <TableRow key={day}>
-                                            <TableCell>{day}</TableCell>
-                                            <TableCell>
-                                                {schedule.length === 0 ? (
-                                                    editMode && (
-                                                        <Button variant="outlined" size="small" startIcon={<Add />} onClick={() => {
-                                                            const newSchedule = { ...profile.schedule };
-                                                            newSchedule[day] = [...(newSchedule[day] || []), { start: null, end: null }];
-                                                            setProfile({ ...profile, schedule: newSchedule });
-                                                        }}>
-                                                            Add Time
-                                                        </Button>
-                                                    )
-                                                ) : (
-                                                    schedule.map((range, idx) => (
-                                                        <Box key={idx} sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                                                            <TextField
-                                                                type="time"
-                                                                label="Start"
-                                                                value={range.start || ""}
-                                                                onChange={(e) => {
-                                                                    const newSchedule = { ...profile.schedule };
-                                                                    newSchedule[day][idx].start = e.target.value;
-                                                                    setProfile({ ...profile, schedule: newSchedule });
-                                                                }}
-                                                                disabled={!editMode}
-                                                                size="small"
-                                                                sx={{ minWidth: 100 }}
-                                                            />
-                                                            <Typography sx={{ mx: 1 }}>-</Typography>
-                                                            <TextField
-                                                                type="time"
-                                                                label="End"
-                                                                value={range.end || ""}
-                                                                onChange={(e) => {
-                                                                    const newSchedule = { ...profile.schedule };
-                                                                    newSchedule[day][idx].end = e.target.value;
-                                                                    setProfile({ ...profile, schedule: newSchedule });
-                                                                }}
-                                                                disabled={!editMode}
-                                                                size="small"
-                                                                sx={{ minWidth: 100 }}
-                                                            />
-                                                            {editMode && (
-                                                                <IconButton size="small" color="error" onClick={() => {
-                                                                    const newSchedule = { ...profile.schedule };
-                                                                    newSchedule[day] = newSchedule[day].filter((_, i) => i !== idx);
-                                                                    setProfile({ ...profile, schedule: newSchedule });
-                                                                }}>
-                                                                    <Delete fontSize="small" />
-                                                                </IconButton>
-                                                            )}
-                                                            {editMode && idx === schedule.length - 1 && (
-                                                                <IconButton size="small" color="primary" onClick={() => {
-                                                                    const newSchedule = { ...profile.schedule };
-                                                                    newSchedule[day] = [...(newSchedule[day] || []), { start: null, end: null }];
-                                                                    setProfile({ ...profile, schedule: newSchedule });
-                                                                }}>
-                                                                    <Add fontSize="small" />
-                                                                </IconButton>
-                                                            )}
-                                                        </Box>
-                                                    ))
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
-            </Paper>
-            <Paper className="profile-section" sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Timesheets Archive
-                </Typography>
-                <Box className="timesheet-archive-container" sx={{ p: 2, border: "1px dashed #bbb", borderRadius: 2 }}>
-                    {/* Timesheet archive table will go here */}
-                    <Typography variant="body2" color="text.secondary">Timesheet archive table (pending)</Typography>
-                </Box>
-            </Paper>
         </Box>
     );
 }
