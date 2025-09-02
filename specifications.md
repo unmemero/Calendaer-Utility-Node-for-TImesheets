@@ -10,11 +10,24 @@ A page that includes the user profile with the following information in the head
 In that header it will have a checkbox selecting the position type, which will influence the rest of the profile. The checkbox menu will be called position type, and the options are full-time, part-time, and work study. Based on the user's selection it will render the following details of the profile:
 
 ### Full-time
-Pending
+- Pay Period
+- Position Number
+- Fund
+- Org
+- Acct
+- Prog
 ### Part-time
-Pending
+- Position Number
+- Hourly Rate
+- 2 rows of
+    - fund
+    - org
+    - acct
+    - prog
+
 ### Work study
-Pending
+- Hourly rate
+
 ### For all profiles
 If filled or not on edit mode, the fields are disabled but display the selected values. It has 2 more things:
 
