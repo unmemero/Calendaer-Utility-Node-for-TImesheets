@@ -1,0 +1,47 @@
+.calendar-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  background: #f8f9fa;
+}
+
+.calendar-title {
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
+.calendar-inputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.calendar-month-input,
+.calendar-year-input {
+  min-width: 100px;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: #fff;
+  padding: 0.75rem 1rem;
+}
+
+.calendar-table {
+  margin-top: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
