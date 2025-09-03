@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Typography, TextField, FormControlLabel, Checkbox, Paper, Grid, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton } from "@mui/material";
 import { Person, Badge, Business, AssignmentInd, Work, Edit, Save, FileDownload, FileUpload } from "@mui/icons-material";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { Add, Delete } from "@mui/icons-material";
+import { encrypt, decrypt } from "../utils/encryptionUtils";
 import "../styles/profile.scss";
 
 const defaultProfile = {
@@ -39,20 +39,17 @@ const defaultProfile = {
     },
 };
 
-function encrypt(data) {
-    // Stub: Replace with real encryption
-    return btoa(JSON.stringify(data));
-}
-function decrypt(data) {
-    // Stub: Replace with real decryption
-    try { return JSON.parse(atob(data)); } catch { return null; }
-}
-
 export default function Profile() {
     const [profile, setProfile] = useState(defaultProfile);
     const [editMode, setEditMode] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const fileInputRef = useRef();
+
+    // Helper: count how many days have at least one shift
+    const getDaysWorked = () => {
+        if (!profile.schedule) return 0;
+        return Object.values(profile.schedule).filter(dayArr => Array.isArray(dayArr) && dayArr.length > 0).length;
+    };
 
     useEffect(() => {
         // Simulate loading encrypted JSON from localStorage
@@ -69,6 +66,10 @@ export default function Profile() {
             setEditMode(true);
         }
         setLoaded(true);
+    }, []);
+
+    useEffect(()=>{
+
     }, []);
 
     const handleChange = (field) => (e) => {
@@ -174,20 +175,20 @@ export default function Profile() {
                 <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Typography variant="h6" sx={{ mb: 1, fontWeight: 700, textAlign: 'center' }}>Profile Tools</Typography>
                     <Button variant="outlined" startIcon={<FileDownload />} onClick={handleExport}>
-                        Export
+                        Export Profile
                     </Button>
                     <Button variant="outlined" startIcon={<FileUpload />} onClick={() => fileInputRef.current.click()}>
-                        Import
+                        Import Profile
                     </Button>
                     <input type="file" accept=".json" ref={fileInputRef} style={{ display: "none" }} onChange={handleImport} />
                     {loaded && (
                         editMode ? (
                             <Button variant="contained" color="primary" startIcon={<Save />} onClick={handleSave}>
-                                Save
+                                Save Profile
                             </Button>
                         ) : (
                             <Button variant="outlined" startIcon={<Edit />} onClick={handleEdit}>
-                                Edit
+                                Edit Profile
                             </Button>
                         )
                     )}
@@ -240,14 +241,16 @@ export default function Profile() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => {
+                                    { ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => {
                                         const schedule = (profile.schedule && profile.schedule[day]) ? profile.schedule[day] : [];
+                                        const daysWorked = getDaysWorked();
+                                        const canAddDay = daysWorked < 6 || schedule.length > 0;
                                         return (
                                             <TableRow key={day}>
                                                 <TableCell>{day}</TableCell>
                                                 <TableCell>
                                                     {schedule.length === 0 ? (
-                                                        editMode && (
+                                                        editMode && canAddDay && (
                                                             <Button variant="outlined" size="small" startIcon={<Add />} onClick={() => {
                                                                 const newSchedule = { ...profile.schedule };
                                                                 newSchedule[day] = [...(newSchedule[day] || []), { start: "", end: "" }];
