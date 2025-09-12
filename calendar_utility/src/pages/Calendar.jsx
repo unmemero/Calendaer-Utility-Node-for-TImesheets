@@ -14,7 +14,7 @@ import "../styles/Calendar.scss";
 export default function Calendar() {
     const [profile, setProfile] = useState(null);
     const [timesheets, setTimesheets] = useState([]);
-    const [maxHours, setMaxHours] = useState(80);
+    //const [maxHours, setMaxHours] = useState(80);
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [year, setYear] = useState(new Date().getFullYear());
     const daysInMonth = getDaysInMonth(month, year);
@@ -28,7 +28,7 @@ export default function Calendar() {
             if (decryptedStorage) {
                 setProfile(decryptedStorage.get("profile",{}));
                 setTimesheets(decryptedStorage.get("timesheets",[]));
-                setMaxHours(decryptedStorage.get("maxHours",80));
+                //setMaxHours(decryptedStorage.get("maxHours",80));
             }
         }
     }, []);
@@ -44,7 +44,7 @@ export default function Calendar() {
                 setHours(timesheetArchive.get("hours", Array(daysInMonth + 1).fill(0)));
             }
         }
-    }, [month, year]);
+    }, [month, year, daysInMonth, profile, timesheets]);
 
     // Build weeks
     const weeks = [];
