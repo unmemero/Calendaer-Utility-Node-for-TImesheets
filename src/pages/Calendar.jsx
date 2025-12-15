@@ -7,12 +7,12 @@ import CalendarTable from '../components/CalendarTable';
 import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from '@mui/icons-material/Print';
 import { decrypt } from "../utils/encryptionUtils";
-import {getDaysInMonth, getWeekday } from "../utils/dateUtils";
+import {getDaysInMonth, getWeekday, calculateDailyHours } from "../utils/calendarUtils";
 
 import "../styles/Calendar.scss";
 
 export default function Calendar() {
-    const [profile, setProfile] = useState(null);
+    const [profileData, setprofileData] = useState(null);
     const [timesheets, setTimesheets] = useState([]);
     //const [maxHours, setMaxHours] = useState(80);
     const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -20,31 +20,36 @@ export default function Calendar() {
     const daysInMonth = getDaysInMonth(month, year);
     const [hours, setHours] = useState(() => Array(daysInMonth + 1).fill(0));
 
-    // Get profile from local storage on page load
+    // Get profileData from local storage on page load
     useEffect(()=>{
-        const encryptedStorage = localStorage.getItem("profile");
+        const encryptedStorage = localStorage.getItem("profileData");
         if (encryptedStorage){
             const decryptedStorage = decrypt(encryptedStorage);
             if (decryptedStorage) {
-                setProfile(decryptedStorage.get("profile",{}));
-                setTimesheets(decryptedStorage.get("timesheets",[]));
-                //setMaxHours(decryptedStorage.get("maxHours",80));
+                setprofileData(decryptedStorage.profileData || null);
+                setTimesheets(decryptedStorage.timesheets || []);
+                //setMaxHours(decryptedStorage.maxHours || 80);
             }
         }
     }, []);
 
     // Recreate hours array if month/year changes
     useEffect(() => {
-        if(!profile) {
+        const timesheetArchive = timesheets.find(timesheet => timesheet && timesheet.key === `${year}-${month}`) || null;
+        const schedule = profileData?.profile.schedule || null;
+        console.log(profileData);
+        if (timesheetArchive && !timesheetArchive.empty) {
+            setHours(timesheetArchive)
+        } else if (schedule) {
+            const newHours = Array(daysInMonth + 1).fill(0);
+            newHours.forEach((day) => {
+                const weekday = getWeekday(year, month, day);
+                newHours[day] = calculateDailyHours(weekday, schedule);
+            });
+        } else {
             setHours(Array(daysInMonth + 1).fill(0));
         }
-        else {
-            const timesheetArchive = timesheets.get(`${year}-${month}`, null);
-            if (timesheetArchive) {
-                setHours(timesheetArchive.get("hours", Array(daysInMonth + 1).fill(0)));
-            }
-        }
-    }, [month, year, daysInMonth, profile, timesheets]);
+    }, [month, year, daysInMonth, profileData, timesheets]);
 
     // Build weeks
     const weeks = [];
@@ -108,7 +113,7 @@ export default function Calendar() {
             {/* Month/Year Input */}
             <Paper elevation={2} className="calendar-inputs" sx={{ p: 2, mb: 2 }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid item>
+                    <Grid>
                         <TextField
                             label="Month"
                             type="number"
@@ -119,7 +124,7 @@ export default function Calendar() {
                             className="calendar-month-input"
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <TextField
                             label="Year"
                             type="number"

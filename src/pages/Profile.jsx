@@ -5,6 +5,13 @@ import { Add, Delete } from "@mui/icons-material";
 import { encrypt, decrypt } from "../utils/encryptionUtils";
 import "../styles/profile.scss";
 
+// Default structure for localStorage
+const defaultStorage = {
+    profile: null,
+    timesheets: [],
+    maxHours: {},
+};
+
 const defaultProfile = {
     firstName: "",
     lastName: "",
@@ -52,11 +59,15 @@ export default function Profile() {
     };
 
     useEffect(() => {
-        // Simulate loading encrypted JSON from localStorage
+        // Load encrypted JSON from localStorage in the correct structure
         const encrypted = localStorage.getItem("profileData");
         if (encrypted) {
             const data = decrypt(encrypted);
-            if (data) {
+            if (data && typeof data === "object" && data.profile) {
+                setProfile(data.profile);
+                setEditMode(false);
+            } else if (data && typeof data === "object") {
+                // fallback: if only profile is present (old format)
                 setProfile(data);
                 setEditMode(false);
             } else {
@@ -82,7 +93,18 @@ export default function Profile() {
 
     const handleEdit = () => setEditMode(true);
     const handleSave = () => {
-        localStorage.setItem("profileData", encrypt(profile));
+        // Load existing storage or use default
+        let storage = defaultStorage;
+        const encrypted = localStorage.getItem("profileData");
+        if (encrypted) {
+            const data = decrypt(encrypted);
+            if (data && typeof data === "object") {
+                storage = { ...defaultStorage, ...data };
+            }
+        }
+        // Update profile only
+        storage.profile = profile;
+        localStorage.setItem("profileData", encrypt(storage));
         setEditMode(false);
     };
 
@@ -107,9 +129,14 @@ export default function Profile() {
         reader.onload = (event) => {
             const encrypted = event.target.result;
             const data = decrypt(encrypted);
-            if (data) {
-                setProfile(data);
+            if (data && typeof data === "object" && data.profile) {
+                setProfile(data.profile);
                 localStorage.setItem("profileData", encrypted);
+                setEditMode(false);
+            } else if (data && typeof data === "object") {
+                // fallback: if only profile is present (old format)
+                setProfile(data);
+                localStorage.setItem("profileData", encrypt({ ...defaultStorage, profile: data }));
                 setEditMode(false);
             } else {
                 alert("Invalid or corrupted profile file.");

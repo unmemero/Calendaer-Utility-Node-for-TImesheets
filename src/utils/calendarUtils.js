@@ -7,14 +7,13 @@ export function getWeekday(year, month, day) {
     return new Date(year, month - 1, day).getDay();
 }
 
-export const calculateDailyHours = (weekday, profile) => {
-    const weeklySchedule = profile?.get("schedule", null);
+export const calculateDailyHours = (weekday, schedule) => {
+    const weeklySchedule = schedule?.[weekday] || [];
     if (!weeklySchedule) return 0;
 
-    const todaySchedule = weeklySchedule.get(weekday, []);
     let total = 0;
 
-    todaySchedule.forEach(shift => {
+    weeklySchedule.forEach(shift => {
         const [startHour, startMin] = shift.get("start","00:00").split(":").map(Number);
         const [endHour, endMin] = shift.get("end","00:00").split(":").map(Number);
 
